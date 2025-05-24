@@ -12,7 +12,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypy6fk9EYAcYgfUT-KA
 app.use(cors());
 app.use(express.json());
 
-app.post('/', async (req, res) => {
+app.post('/write', async (req, res) => {
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
