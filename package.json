@@ -1,15 +1,13 @@
 {
-  "name": "test_911_proxy",
+  "name": "a1-proxy-render",
   "version": "1.0.0",
-  "description": "Proxy сервер для запису/читання числа з Google Таблиці",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "type": "commonjs",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "undici": "^6.6.1"
+    "node-fetch": "^2.6.7"
   }
 }

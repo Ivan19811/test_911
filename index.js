@@ -1,48 +1,42 @@
-const express = require("express");
-const cors = require("cors");
-const { fetch } = require("undici");
+const express = require('express');
+const cors = require('cors');
+const fetch = require('node-fetch');
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
 // 🔗 Посилання на Apps Script
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypy6fk9EYAcYgfUT-KAgEEkUt7zdd3_fsTTQQXRwGoNm9aY5qrnEy7Yf1DRwo4g2v8/exec";
 
 // ✏️ Запис числа
-app.post("/write", async (req, res) => {
+app.use(cors());
+app.use(express.json());
+
+app.post('/', async (req, res) => {
   try {
     const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ value: req.body.value })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
     });
 
-    const text = await response.text(); // ⬅️ Приймаємо текст
-    const data = JSON.parse(text);     // ⬅️ Пробуємо вручну розпарсити
-    res.json(data);
+    const data = await response.json();
+    res.status(200).json(data);
   } catch (err) {
-    console.error("❌ Write proxy error:", err);
-    res.status(500).json({ success: false, error: "Proxy write error", details: err.message });
+    res.status(500).json({ error: 'POST failed' });
   }
 });
 
-// 🔍 Отримання останнього значення
-app.get("/last", async (req, res) => {
+app.get('/last', async (req, res) => {
   try {
-    const response = await fetch(SCRIPT_URL); // ⬅️ doGet викликається без тіла
-
-    const text = await response.text();       // ⬅️ Приймаємо як текст
-    const data = JSON.parse(text);            // ⬅️ Пробуємо вручну розпарсити
-    res.json(data);
+    const response = await fetch(SCRIPT_URL);
+    const data = await response.json();
+    res.status(200).json(data);
   } catch (err) {
-    console.error("❌ Last proxy error:", err);
-    res.status(500).json({ success: false, error: "Proxy last error", details: err.message });
+    res.status(500).json({ error: 'GET failed' });
   }
 });
 
-// ✅ ОБОВ’ЯЗКОВО для Render
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Proxy running on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`✅ Proxy listening on port ${PORT}`);
 });
